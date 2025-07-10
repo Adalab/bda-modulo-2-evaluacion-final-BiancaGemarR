@@ -329,7 +329,134 @@ ON fc.category_id = c.category_id
 WHERE f.length > 180 
 AND c.name = 'Comedy';
 
+/*25.Encuentra todos los actores que han actuado juntos en al menos una película. 
+La consulta debe mostrar el nombre y apellido de los actores y el número de películas 
+en las que han actuado juntos.*/
+SELECT a.first_name AS nombre,
+		a.last_name AS apellido,
+        a.actor_id,
+        fa.film_id
+FROM actor AS a
+LEFT JOIN film_actor AS fa
+ON a.actor_id = fa.actor_id; /*esta consulta me da el nombre y en que películas está cada actor*/
 
+SELECT a.actor_id,
+        fa.film_id
+FROM actor AS a
+LEFT JOIN film_actor AS fa
+ON a.actor_id = fa.actor_id;
+
+SELECT a1.first_name AS actor_nombre1,
+		a1.last_name AS actor_apellido1,
+        a2.first_name AS actor_nombre2,
+		a2.last_name AS actor_apellido2,
+        a.actor_id,
+        fa.film_id,
+        f.title AS título
+FROM actor AS a1
+JOIN actor AS a2
+	ON fa1.actor_id = a1.actor_id
+JOIN film_actor AS fa1
+	ON a1.actor_id = fa1.actor_id
+    JOIN film_actor AS fa2
+	ON a2.actor_id = fa2.actor_id
+JOIN film As f
+	ON fa.film_id = f.film_id
+GROUP BY a.actor_id;
+
+SELECT a1.first_name AS actor_nombre1,
+		a1.last_name AS actor_apellido1,
+        a2.first_name AS actor_nombre2,
+		a2.last_name AS actor_apellido2,
+        a.actor_id,
+        fa.film_id,
+        f.title AS título
+FROM actor AS a1
+JOIN actor AS a2
+	ON fa1.actor_id = a1.actor_id
+JOIN film_actor AS fa1
+	ON a1.actor_id = fa1.actor_id
+    JOIN film_actor AS fa2
+	ON a2.actor_id = fa2.actor_id; --orden incorrecto de los joins
+    
+SELECT 
+    a1.first_name AS actor_nombre1,
+    a1.last_name AS actor_apellido1,
+    a2.first_name AS actor_nombre2,
+    a2.last_name AS actor_apellido2,
+    fa1.film_id,
+    fa2.film_id
+FROM film_actor fa1
+JOIN film_actor fa2 
+	ON fa1.film_id = fa2.film_id 
+    AND fa1.actor_id < fa2.actor_id
+JOIN actor a1 
+	ON fa1.actor_id = a1.actor_id
+JOIN actor a2 
+	ON fa2.actor_id = a2.actor_id; /*aquí tengo los actores que coinciden en el film_id, 
+									me falta el título de la peli y agrupar*/
+    
+SELECT 
+    a1.first_name AS actor_nombre1,
+    a1.last_name AS actor_apellido1,
+    a2.first_name AS actor_nombre2,
+    a2.last_name AS actor_apellido2,
+    fa1.film_id,
+    fa2.film_id,
+    f.title AS título
+FROM film_actor AS fa1
+JOIN film_actor AS fa2 
+	ON fa1.film_id = fa2.film_id 
+    AND fa1.actor_id < fa2.actor_id
+JOIN actor AS a1 
+	ON fa1.actor_id = a1.actor_id
+JOIN actor AS a2 
+	ON fa2.actor_id = a2.actor_id
+JOIN film AS f
+	ON fa1.film_id = f.film_id; /*Aquí ya aparece el título*/
+    
+SELECT 
+    a1.first_name AS actor_nombre1,
+    a1.last_name AS actor_apellido1,
+    a2.first_name AS actor_nombre2,
+    a2.last_name AS actor_apellido2,
+    fa1.film_id,
+    f.title AS título
+FROM film_actor AS fa1
+JOIN film_actor AS fa2 
+	ON fa1.film_id = fa2.film_id 
+    AND fa1.actor_id < fa2.actor_id
+JOIN actor AS a1 
+	ON fa1.actor_id = a1.actor_id
+JOIN actor AS a2 
+	ON fa2.actor_id = a2.actor_id
+JOIN film AS f
+	ON fa1.film_id = f.film_id
+GROUP BY a1.actor_id, a2.actor_id, 
+		fa1.film_id, f.title, 
+        a1.first_name, a1.last_name, 
+        a2.first_name, a2.last_name;
+--query final sin film_id
+SELECT 
+    a1.first_name AS actor_nombre1,
+    a1.last_name AS actor_apellido1,
+    a2.first_name AS actor_nombre2,
+    a2.last_name AS actor_apellido2,
+    COUNT(f.title) AS NUM_veces_juntos
+FROM film_actor AS fa1
+JOIN film_actor AS fa2 
+	ON fa1.film_id = fa2.film_id 
+    AND fa1.actor_id < fa2.actor_id
+JOIN actor AS a1 
+	ON fa1.actor_id = a1.actor_id
+JOIN actor AS a2 
+	ON fa2.actor_id = a2.actor_id
+JOIN film AS f
+	ON fa1.film_id = f.film_id
+GROUP BY a1.actor_id, a2.actor_id,
+        a1.first_name, a1.last_name, 
+        a2.first_name, a2.last_name
+ORDER BY NUM_veces_juntos DESC;
 
 
 
