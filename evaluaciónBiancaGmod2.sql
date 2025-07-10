@@ -177,7 +177,7 @@ ON f.film_id = fca.film_id
 LEFT JOIN category AS c
 ON fca.category_id = c.category_id
 WHERE c.name = 'Family';
---En la query final quitamo el name
+--En la query final quitamos el name
 SELECT f.title AS título
 FROM film AS f
 LEFT JOIN film_category AS fca
